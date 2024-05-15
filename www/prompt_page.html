@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Page with Image and Text</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .image {
+        width: 100%;
+    }
+    .text-section {
+        background-color: #f0f0f0;
+        padding: 20px;
+        text-align: center;
+    }
+    .textbox {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .button {
+        padding: 10px 20px;
+        margin-top: 10px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .button:hover {
+        background-color: #0056b3;
+    }
+    #file-drop {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    }
+</style>
+<script src="prepage_javascript.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <img src="C:\src\fincat\images\FinCat.png" alt="Large Image" class="image">
+
+    <div id="file-drop">
+        <p>Drag and drop files here or click to choose files</p>
+    </div>
+
+    <div id="prompt-box" class="text-section">
+        <h2>Text Section</h2>
+        <p>This is a large division for displaying text.</p>
+    </div>
+
+    <input type="text" id="input-box" class="input-box" placeholder="Enter text...">
+
+    <button id="breakdown-button" class="button">Get Breakdown</button>
+    <button id="review-button" class="button" >Review File</button>
+</div>
+<script src="postpage_javascript.js"></script>
+</body>
+
+</html>
