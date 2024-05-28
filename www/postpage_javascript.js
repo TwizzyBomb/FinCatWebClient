@@ -155,8 +155,8 @@ breakdownBtn.addEventListener("click", function() {
 
     // START ( d3 - sankey specific ) START
       // Set up SVG dimensions
-      const width = 600;
-      const height = 400;
+      const width = 800;
+      const height = 800;
 
       // Create SVG element
       const svg = d3.select("#sankey-container").append("svg")
