@@ -158,6 +158,12 @@ breakdownBtn.addEventListener("click", function() {
       const width = 800;
       const height = 800;
 
+      // Create a scale for the colors
+      const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+      // Define a color scale
+      const color = d3.scaleOrdinal(d3.schemeCategory10);
+
       // Create SVG element
       const svg = d3.select("#sankey-container").append("svg")
         .attr("width", width)
@@ -185,12 +191,14 @@ breakdownBtn.addEventListener("click", function() {
           .attr("d", d3.sankeyLinkHorizontal())
           .style("stroke-width", d => Math.max(1, d.width))
           .style("stroke-opacity", 0.2)
-          .style("fill", "none");
+          .style("fill", "none")
+          .style("stroke", d => color(d.source.id));
 
       // Draw nodes
       svg.append("g")
         .selectAll(".node")
         .data(nodes)
+        .style('fill', d => color(d.id))
         .enter().append("rect")
           .attr("class", "node")
           .attr("x", d => d.x0)
