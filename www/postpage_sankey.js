@@ -113,47 +113,35 @@ breakdownBtn.addEventListener("click", function() {
 
     // post response - might go in the onload
     const parsedJson = JSON.parse(responseData);
-
-    //  // Define the data structure for the Sankey diagram
-    let nodez = [];
-    let linkz = [];
-
-    // loop through the keys of the object
-    for (let key in parsedJson) {
-    // check if the value corresponding to the key is an object
-      if (typeof parsedJson[key] === 'object') {
-        console.log(`Category: ${key}`);
-		for (let key in parsedJson) {
-			// Loop through the keys of the inner object
-			for (let parentCatKey in parsedJson[key]){
-			  // parsedJson[key] = breakdown list so the inner key is loan, food, etc.
-			  console.log(`parentCatKey: ${parentCatKey}`);
-			  for (let childCatKey in parsedJson[key][parentCatKey]){
-				if("total" === childCatKey){
-				  // need to include this in somehow
-				  nodez.push( {id: parentCatKey} );
-				  linkz.push({ source: "income", target: parentCatKey, value: parsedJson[key][parentCatKey][childCatKey]});
-				} else {
-				  console.log(`childCatKey: ${childCatKey} childCatValue: ${parsedJson[key][parentCatKey][childCatKey]}`);
-
-				  // add to nodez and linkz arrays
-				  nodez.push( {id: childCatKey} );
-				  linkz.push({source:parentCatKey, target: childCatKey, value: parsedJson[key][parentCatKey][childCatKey]});
-				}
-			  }
-			}
+	
+	const sankeyData = {
+		nodes: [],
+		links: []
+	};
+	
+	const nodeMap = new Map();
+	
+	function addNode(name) {
+		if (!nodeMap.has(name)) {
+			nodeMap.set(name, nodeMap.size);
+			sankeyData.nodes.push({ name });
 		}
-      } else {
-        // top level total
-        bigTotal = parsedJson[key];
-        console.log(`${key}: ${parsedJson[key]}`);
-      }
-    }
-
-    const data = [{nodez, linkz}];
-//    nodes = `null`;
-//    links = `null`;
-
+		return nodeMap.get(name);
+	}
+	
+	extractKeys(parsedJson).forEach(({ parent, child }) => {
+		const source = addNode(parent);
+		const target = addNode(child);
+		sankeyData.links.push({
+			source,
+			target,
+			value: 1 // modify based and actual financial data
+		});
+	});
+	
+	
+	console.log(sankeyData);
+	
     // START ( d3 - sankey specific ) START
       // Set up SVG dimensions
       const width = 800;
@@ -177,11 +165,7 @@ breakdownBtn.addEventListener("click", function() {
         .extent([[1, 1], [width - 1, height - 6]]);
 
       // Process data
-      var { nodes, links } = sankey({
-        nodes: data[0].nodez.map(d => ({ ...d })),
-        links: data[0].linkz.map(d => ({ ...d }))
-      });
-//      const { nodes, links } = sankey( nodez, linkz );
+      const { nodes, links } = sankey(sankeyData);
 
       // Draw links
       svg.append("g")
@@ -223,84 +207,26 @@ breakdownBtn.addEventListener("click", function() {
     // END ( d3 - sankey specific ) END
 });
 
-// START ( d3 - sankey specific ) START
-//function id(d) {
-//  return d.id;
-//}
+// function to extract parent and child keys
+function extractKeys(data) {
+	let result = [];
+	
+	function recurse(obj, parentKey) {
+		if (typeof obj === 'object') {
+			for (const key in obj) {
+				if (typeof obj[key] === 'object') {
+					result.push({parent: parentKey, child: key});
+					recurse(obj[key], key); // recursive call for nested objects
+				}
+			}
+		}
+	}
+	
+	if (data && data.charges && data.charges.breakdownList) {
+		recurse(data.charges.breakdownList, "charges")
+	}
+	
+	return result;
+}
 
 
-//const data = {
-//  nodes: [
-//    { id: "A" },
-//    { id: "B" },
-//    { id: "C" },
-//    { id: "D" },
-//    { id: "E" }
-//  ],
-//  links: [
-//    { source: "A", target: "B", value: 20 },
-//    { source: "A", target: "C", value: 10 },
-//    { source: "B", target: "D", value: 15 },
-//    { source: "C", target: "D", value: 5 },
-//    { source: "D", target: "E", value: 20 }
-//  ]
-//};
-
-//// START ( d3 - sankey specific ) START
-//  // Set up SVG dimensions
-//  const width = 600;
-//  const height = 400;
-//
-//  // Create SVG element
-//  const svg = d3.select("#sankey-container").append("svg")
-//    .attr("width", width)
-//    .attr("height", height);
-//
-//  // Create Sankey layout
-//  const sankey = d3.sankey()
-//    .nodeWidth(15)
-//    .nodePadding(10)
-//    .extent([[1, 1], [width - 1, height - 6]]);
-//
-//  // Process data
-//  const { nodes, links } = sankey({
-//    nodes: data.nodes.map(d => ({ ...d })),
-//    links: data.links.map(d => ({ ...d }))
-//  });
-//
-//  // Draw links
-//  svg.append("g")
-//    .selectAll(".link")
-//    .data(links)
-//    .enter().append("path")
-//      .attr("class", "link")
-//      .attr("d", d3.sankeyLinkHorizontal())
-//      .style("stroke-width", d => Math.max(1, d.width))
-//      .style("stroke-opacity", 0.2)
-//      .style("fill", "none");
-//
-//  // Draw nodes
-//  svg.append("g")
-//    .selectAll(".node")
-//    .data(nodes)
-//    .enter().append("rect")
-//      .attr("class", "node")
-//      .attr("x", d => d.x0)
-//      .attr("y", d => d.y0)
-//      .attr("height", d => d.y1 - d.y0)
-//      .attr("width", d => d.x1 - d.x0)
-//    .append("title")
-//      .text(d => `${d.id}\n${d.value}`);
-//
-//  // Add node labels
-//  svg.append("g")
-//    .selectAll(".node-label")
-//    .data(nodes)
-//    .enter().append("text")
-//      .attr("class", "node-label")
-//      .attr("x", d => d.x0 - 6)
-//      .attr("y", d => (d.y1 + d.y0) / 2)
-//      .attr("dy", "0.35em")
-//      .attr("text-anchor", "end")
-//      .text(d => d.id);
-//// END ( d3 - sankey specific ) END
