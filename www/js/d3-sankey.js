@@ -50,7 +50,7 @@ function value(d) {
 }
 
 function defaultId(d) {
-  return d.id;
+  return d.index;
 }
 
 function defaultNodes(graph) {
