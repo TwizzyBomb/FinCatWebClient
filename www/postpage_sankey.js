@@ -133,35 +133,70 @@ breakdownBtn.addEventListener("click", function () {
     }
 
     const extractedKeys = extractKeys(parsedJson);
+    var incomeTotal = 0;
+    var incomeIndex;
     console.log(extractedKeys);
 
+    // loop through keys, add nodes and links
     extractedKeys.forEach(item => {
-		
+		var newChild = true;
         if (item.parentCategory == 'charges') { // not sure why this is getting picked up in parent loop...
             return;
         }
+
         // loop through the outer object keys
-        console.log('parent category:', item.parentCategory)
-
-        let source = addNode(item.parentCategory); // parent index
         item.childrenAndTotals.forEach(child => {
-            if (child.target == 'total') {
-                return; // a continue for a foreach
-            }
-            console.log('child:', child.target, 'child value:', child.weight);
 
-            let target = addNode(child.target); // child index
-            sankeyData.links.push({
-                source,
-                target,
-                value: child.weight
-            });
+            if(item.parentCategory === 'income'){
+                if (child.target == 'total') {
+                    if(item.parentCategory === 'income'){
+                        incomeTotal = child.weight;
+                    }
+                    return; // a continue for a foreach
+                }
+
+                // add reverse order
+                let source = addNode(child.target); // child index
+                let target = addNode(item.parentCategory); // parent index
+                incomeIndex = target;
+
+                // reverse source and target if income
+                sankeyData.links.push({
+                    source,
+                    target,
+                    value: incomeTotal
+                });
+            } else {
+                if (child.target == 'total') {
+                    return; // a continue for a foreach
+                }
+
+                // normal order
+                let source = addNode(item.parentCategory); // parent index
+                let target = addNode(child.target); // child index
+
+                // if this user has income
+                if(incomeTotal > 0 && newChild){
+                    // need to add link to center income total
+                    source = incomeIndex;
+                    sankeyData.links.push({
+                        source,
+                        target,
+                        value: child.weight // should be total
+                    })
+                    newChild = false;
+                }
+                sankeyData.links.push({
+                    source,
+                    target,
+                    value: child.weight
+                });
+            }
         });
     });
 
     console.log(sankeyData);
 
-    // START ( d3 - sankey specific ) START
     // Set up SVG dimensions
     const width = 600;
     const height = 400;
@@ -188,6 +223,9 @@ breakdownBtn.addEventListener("click", function () {
         nodes,
         links
     } = sankey(sankeyData);
+	
+	// clear previous elements
+	svg.selectAll('*').remove();
 
     // Draw links
     svg.append("g")
@@ -197,8 +235,8 @@ breakdownBtn.addEventListener("click", function () {
     .attr("class", "link")
     .attr("d", d3.sankeyLinkHorizontal())
     .style("stroke-width", d => Math.max(1, d.width))
-    .style("stroke-opacity", 0.2)
-    .style("fill", "none")
+    .style("stroke-opacity", 0.9)
+    //.style("fill", "none")
     .style("stroke", d => color(d.source.id));
 
     // Draw nodes
@@ -224,7 +262,7 @@ breakdownBtn.addEventListener("click", function () {
     .attr("x", d => d.x0 - 6)
     .attr("y", d => (d.y1 + d.y0) / 2)
     .attr("dy", "0.35em")
-    //.attr("text-anchor", "end")
+    .attr("text-anchor", "end")
     .text(d => d.name);
     // END ( d3 - sankey specific ) END
 });
@@ -255,8 +293,18 @@ function extractKeys(data) {
         });
     }
 
-    if (data && data.charges && data.charges.breakdownList) {
-        recurse(data.charges.breakdownList, "charges")
+    if ( data && (data.income && data.income.breakdownlist) || (data.charges && data.charges.breakdownList) ) {
+        recurse(data.income.breakdownList, "income")
+        // remove last entry (income gets recursed up to with no array)
+        if( result.length > 1){
+            result.pop();
+        }
+
+		recurse(data.charges.breakdownList, "charges")
+		// remove last entry (charges gets recursed up to with no array)
+		if(result.length > 2){
+		    result.pop();
+		}
     }
 
     return result;
