@@ -175,9 +175,16 @@ breakdownBtn.addEventListener("click", function () {
                 let source = addNode(item.parentCategory); // parent index
                 let target = addNode(child.target); // child index
 
+				// create parent to child link
+				sankeyData.links.push({
+                    source,
+                    target,
+                    value: child.weight
+                });
                 // if this user has income
                 if(incomeTotal > 0 && newChild){
                     // need to add link to center income total
+					target = source;
                     source = incomeIndex;
                     sankeyData.links.push({
                         source,
@@ -186,11 +193,7 @@ breakdownBtn.addEventListener("click", function () {
                     })
                     newChild = false;
                 }
-                sankeyData.links.push({
-                    source,
-                    target,
-                    value: child.weight
-                });
+                
             }
         });
     });
@@ -259,11 +262,14 @@ breakdownBtn.addEventListener("click", function () {
     .data(nodes)
     .enter().append("text")
     //.attr("class", "node-label")
-    .attr("x", d => d.x0 - 6)
+    .attr("x", d => d.x0 - 1)
     .attr("y", d => (d.y1 + d.y0) / 2)
     .attr("dy", "0.35em")
     .attr("text-anchor", "end")
-    .text(d => d.name);
+    .text(d => d.name)
+	.filter(d => d.x0 < width / 2)
+	.attr("x", d => d.x1 + 1 )
+	.attr("text-anchor", "start");
     // END ( d3 - sankey specific ) END
 });
 
