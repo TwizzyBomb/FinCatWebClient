@@ -98,7 +98,7 @@ breakdownBtn.addEventListener("click", function () {
     var bigTotal = 0.0;
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:8080/api/breakdown", false);
+    xhr.open("POST", "http://localhost:8080/api/breakdown", false); //   "http://18.118.137.242:8080/api/breakdown"
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     xhr.onload = function () {
@@ -201,8 +201,8 @@ breakdownBtn.addEventListener("click", function () {
     console.log(sankeyData);
 
     // Set up SVG dimensions
-    const width = 600;
-    const height = 400;
+    const width = 900;
+    const height = 900;
 
     // Create a scale for the colors
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -217,9 +217,9 @@ breakdownBtn.addEventListener("click", function () {
 
     // Create Sankey layout
     const sankey = d3.sankey()
-        .nodeWidth(15)
-        .nodePadding(10)
-        .extent([[1, 1], [width - 1, height - 6]]);
+        .nodeWidth(5)
+        .nodePadding(20)
+        .extent([[1, 1], [width - 1, height - 1]]);
 
     // Process data
     const {
