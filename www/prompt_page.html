@@ -3,14 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Web Page with Image and Text</title>
-<style>
+<title>FinCat - the Open Source Budget lifesaving tool to protect your future and the kittens</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D3 Sankey Diagram Example</title>
+    <!-- Include D3.js library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script> 
+	<script src="./js/d3-sankey.js"></script>
+	<script src="./js/d3-array.js"></script>
+	<script src="./js/d3-collection.min.js"></script>
+	<script src="./js/d3-shape-min.js"></script>
+	<script src="./js/d3-path.min.js"></script>
+	<script src="./js/d3-v7-min.js"></script>
+
+    <!-- Include d3-sankey plugin
+    <script src="d3-sankey.js"></script>
+    <script src="https://unpkg.com/d3-array@1"></script>
+    <script src="https://unpkg.com/d3-collection@1"></script>
+    <script src="https://unpkg.com/d3-path@1"></script>
+    <script src="https://unpkg.com/d3-shape@1"></script>
+    <!-- <script src="https://unpkg.com/d3-sankey@0"></script> -->
+    <style>
+    /* Define styles for the Sankey diagram */
+    .link {
+      fill: none;
+      stroke: #000;
+      stroke-opacity: 0.2;
+    }
+
+    .node {
+      fill: blue;
+    }
+
+    .node text {
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      fill: #fff;
+    }
+  </style>
+    <style>
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
     }
-    .container {
+    body#container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .sankey-container {
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
@@ -73,7 +115,14 @@
     <button id="breakdown-button" class="button">Get Breakdown</button>
     <button id="review-button" class="button" >Review File</button>
 </div>
-<script src="postpage_javascript.js"></script>
+<script src="postpage_sankey.js"></script>
+
+<div id="sankey-container"></div>
+<script>
+
+
+</script>
+
 </body>
 
 </html>
