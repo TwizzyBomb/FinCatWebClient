@@ -143,10 +143,10 @@ breakdownBtn.addEventListener("click", function () {
         if (item.parentCategory == 'charges') { // not sure why this is getting picked up in parent loop...
             return;
         }
-
+		let linkTotal = 0;
         // loop through the outer object keys
         item.childrenAndTotals.forEach(child => {
-
+		
             if(item.parentCategory === 'income'){
                 if (child.target == 'total') {
                     if(item.parentCategory === 'income'){
@@ -167,14 +167,16 @@ breakdownBtn.addEventListener("click", function () {
                     value: incomeTotal
                 });
             } else {
+				
                 if (child.target == 'total') {
-                    return; // a continue for a foreach
+					linkTotal = child.weight;
+					return; // a continue for a foreach
                 }
 
                 // normal order
                 let source = addNode(item.parentCategory); // parent index
                 let target = addNode(child.target); // child index
-
+				
 				// create parent to child link
 				sankeyData.links.push({
                     source,
@@ -184,14 +186,16 @@ breakdownBtn.addEventListener("click", function () {
                 // if this user has income
                 if(incomeTotal > 0 && newChild){
                     // need to add link to center income total
+					
 					target = source;
                     source = incomeIndex;
                     sankeyData.links.push({
                         source,
                         target,
-                        value: child.weight // should be total
+                        value: linkTotal > 0 ? linkTotal : child.weight// should be total
                     })
                     newChild = false;
+					linkTotal = 0;
                 }
                 
             }
@@ -201,8 +205,8 @@ breakdownBtn.addEventListener("click", function () {
     console.log(sankeyData);
 
     // Set up SVG dimensions
-    const width = 900;
-    const height = 900;
+    const width = 800;
+    const height = 600;
 
     // Create a scale for the colors
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -217,8 +221,8 @@ breakdownBtn.addEventListener("click", function () {
 
     // Create Sankey layout
     const sankey = d3.sankey()
-        .nodeWidth(5)
-        .nodePadding(20)
+        .nodeWidth(8)
+        .nodePadding(6)
         .extent([[1, 1], [width - 1, height - 1]]);
 
     // Process data
@@ -226,6 +230,12 @@ breakdownBtn.addEventListener("click", function () {
         nodes,
         links
     } = sankey(sankeyData);
+	
+	const maxLinkValue = d3.max(sankeyData.links, d => d.value);
+	const maxNodeValue = d3.max(sankeyData.nodes, d => d.value);
+	
+	const heightScalingFactor = height / maxLinkValue;
+	// const widthScalingFactor = width / maxLinkValue;
 	
 	// clear previous elements
 	svg.selectAll('*').remove();
@@ -251,7 +261,7 @@ breakdownBtn.addEventListener("click", function () {
     .attr("class", "node")
     .attr("x", d => d.x0)
     .attr("y", d => d.y0)
-    .attr("height", d => d.y1 - d.y0)
+    .attr("height", d => (d.y1 - d.y0))
     .attr("width", d => d.x1 - d.x0)
     .append("title")
     .text(d => `${d.id}\n${d.value}`);
