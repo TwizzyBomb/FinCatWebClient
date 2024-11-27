@@ -1,9 +1,5 @@
 ## READ ME ##
 
-## Description
-sankey links need to total as the first key in the json category or else the sankey width won't display properly with the rectangular node
-larger than it's link graph
-
 
 # Project Name: Fincat Web Client
 
@@ -11,6 +7,8 @@ larger than it's link graph
 
 ## Description
 This is a client view for the Finance Categorizor (FinCat) application built with HTML, CSS, and JavaScript. It features sections to upload your csv files for processing, and a get breakdown button which will produce a sankey chart illustrating your spending trends. The website is fully responsive and optimized for performance.
+
+Note: Sankey links need to see total as the first key in the json category or else the sankey width won't display properly with the rectangular node appearing larger than it's link graph
 
 ## Table of Contents
 1. [Demo](#demo)
@@ -69,4 +67,4 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 Author: Yahia Adrian Brocke
 Email: adrian.brocke@gmail.com
-Feel free to contact me for questions or collaboration opportunities! 
+Feel free to contact me for questions or collaboration opportunities!
